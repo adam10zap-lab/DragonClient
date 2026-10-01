@@ -1,4 +1,3 @@
-
 import Stripe from "stripe";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
@@ -117,15 +116,25 @@ export async function POST(request: Request) {
       .from("licenses")
       .insert({
         license_key: licenseKey,
-        user_id: userId,
+
+        // Licence není po nákupu automaticky přiřazená účtu
+        user_id: null,
+
         plan,
         active: true,
+
+        // Licence čeká na redeem
+        redeemed: false,
+
         expires_at: expiresAt,
+
         stripe_checkout_session_id: session.id,
+
         stripe_customer_id:
           typeof session.customer === "string"
             ? session.customer
             : session.customer?.id ?? null,
+
         stripe_subscription_id:
           typeof session.subscription === "string"
             ? session.subscription
@@ -133,7 +142,10 @@ export async function POST(request: Request) {
       });
 
     if (error) {
-      console.error("❌ License creation error:", JSON.stringify(error, null, 2));
+      console.error(
+        "❌ License creation error:",
+        JSON.stringify(error, null, 2)
+      );
 
       return new NextResponse("Could not create license", {
         status: 500,
@@ -141,8 +153,9 @@ export async function POST(request: Request) {
     }
 
     console.log(
-      `✅ Created DragoClient ${plan} license: ${licenseKey}`
+      `✅ Created unused DragoClient ${plan} license: ${licenseKey}`
     );
+    console.log("📧 License will be sent to the customer's email.");
   }
 
   console.log("🔥 WEBHOOK FINISHED");
@@ -151,4 +164,3 @@ export async function POST(request: Request) {
     received: true,
   });
 }
-
