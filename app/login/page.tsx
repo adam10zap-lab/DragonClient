@@ -1,61 +1,67 @@
-"use client";
+import Link from "next/link";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { supabase } from "../../lib/supabase";
-
-export default function LoginPage() {
-  const router = useRouter();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
-
-  async function login() {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setMessage(error.message);
-      return;
-    }
-
-    router.push("/dashboard");
-  }
-
+export default function Login() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <div className="w-full max-w-md space-y-4 p-6">
-        <h1 className="text-3xl font-bold">
-          Login
-        </h1>
+    <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
+      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+        <h1 className="text-3xl font-bold">Welcome back</h1>
 
-        <input
-          className="w-full rounded border p-3"
-          placeholder="Email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <p className="mt-2 text-zinc-400">
+          Login to your DragoClient account.
+        </p>
 
-        <input
-          className="w-full rounded border p-3"
-          placeholder="Password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <form className="mt-8 space-y-5">
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm text-zinc-300"
+            >
+              Email
+            </label>
 
-        <button
-          className="w-full rounded bg-black p-3 text-white"
-          onClick={login}
-        >
-          Login
-        </button>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="you@example.com"
+              className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none transition placeholder:text-zinc-600 focus:border-blue-500"
+            />
+          </div>
 
-        <p>{message}</p>
+          <div>
+            <label
+              htmlFor="password"
+              className="mb-2 block text-sm text-zinc-300"
+            >
+              Password
+            </label>
+
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="••••••••"
+              className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none transition placeholder:text-zinc-600 focus:border-blue-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full rounded-xl bg-blue-600 py-3 font-semibold transition hover:bg-blue-500"
+          >
+            Login
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-zinc-400">
+          Don't have an account?{" "}
+          <Link
+            href="/register"
+            className="font-medium text-blue-500 hover:text-blue-400"
+          >
+            Register
+          </Link>
+        </div>
       </div>
     </main>
   );
